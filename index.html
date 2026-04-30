@@ -879,8 +879,9 @@ function exportUno(p) {
     fila('Con qué servicio/TL/agente se validó el caso de uso', p.validado_ava),
   ];
 
-  const BOM = '\uFEFF'; // BOM para que Excel reconozca UTF-8 con tildes
-  download('proceso_' + p.id + '_' + today() + '.csv', BOM + rows.join('\n'), 'text/csv;charset=utf-8');
+  const BOM = '\uFEFF';
+  const nombreLimpio = (p.nombre || 'proceso').replace(/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/g, '').trim().replace(/\s+/g, '_');
+  download(nombreLimpio + '_' + today() + '.csv', BOM + rows.join('\n'), 'text/csv;charset=utf-8');
   toast('✓ CSV exportado: ' + p.id, 'ok');
 }
 
