@@ -346,12 +346,16 @@ td.date-cell { font-family: var(--mono); font-size: 11px; color: var(--gray-500)
         <div class="section-title gray">📌 Datos generales</div>
         <div class="form-grid">
           <div class="field">
-            <label>Nombre del contenido <span class="req">*</span></label>
-            <input type="text" id="f-nombre" placeholder="Ej: Manual de bienvenida"/>
+            <label>ID del proceso <span class="req">*</span></label>
+            <input type="text" id="f-id" placeholder="Ej: P001" style="font-family:var(--mono);font-size:13px;"/>
           </div>
           <div class="field">
             <label>Fecha de revisión</label>
             <input type="date" id="f-fecha"/>
+          </div>
+          <div class="field full">
+            <label>Nombre del contenido <span class="req">*</span></label>
+            <input type="text" id="f-nombre" placeholder="Ej: Manual de bienvenida"/>
           </div>
         </div>
       </div>
@@ -634,8 +638,11 @@ async function saveProceso() {
   const nombre = document.getElementById('f-nombre').value.trim();
   if (!nombre) { toast('⚠ El nombre del contenido es obligatorio', 'err'); return; }
 
+  const idInput = document.getElementById('f-id').value.trim();
+  if (!idInput) { toast('⚠ El ID del proceso es obligatorio', 'err'); return; }
+
   const data = {
-    id: editingId || '', nombre,
+    id: idInput, nombre,
     fecha_revision:        document.getElementById('f-fecha').value,
     actualizado:           document.getElementById('f-actualizado').value,
     detalle_actualizacion: document.getElementById('f-detalle-actualiz').value,
@@ -742,12 +749,21 @@ function showView(v) {
   if (v === 'list') document.getElementById('nav-list').classList.add('active');
   window.scrollTo(0, 0);
 }
-function newProceso() { editingId = null; clearForm(); document.getElementById('form-title').textContent = 'Nuevo proceso'; document.getElementById('form-id-badge').style.display = 'none'; showView('form'); document.getElementById('nav-new').classList.add('active'); }
+function newProceso() {
+  editingId = null; clearForm();
+  const idEl = document.getElementById('f-id');
+  idEl.readOnly = false;
+  idEl.style.background = '';
+  document.getElementById('form-title').textContent = 'Nuevo proceso';
+  document.getElementById('form-id-badge').style.display = 'none';
+  showView('form');
+  document.getElementById('nav-new').classList.add('active');
+}
 function editProceso(id) { const p = allProcesos.find(x => x.id === id); if (!p) return; editingId = id; clearForm(); fillForm(p); document.getElementById('form-title').textContent = 'Editar proceso'; const b = document.getElementById('form-id-badge'); b.textContent = id; b.style.display = ''; showView('form'); }
 
 // ── FORM ──────────────────────────────────────
 function clearForm() {
-  ['f-nombre','f-fecha','f-actualizado','f-detalle-actualiz','f-faqs','f-faqs-necesarias',
+  ['f-id','f-nombre','f-fecha','f-actualizado','f-detalle-actualiz','f-faqs','f-faqs-necesarias',
    'f-tipif','f-tipif-necesaria','f-oferta','f-mejora-oferta','f-avisos','f-info-incluida',
    'f-mejora-nec','f-resumen-mejora','f-nuevo-contenido-id','f-feedback-servicio','f-validado-por',
    'f-avatado','f-loc-ava','f-caso-ava','f-resumen-ava','f-feedback-ava','f-validado-ava']
@@ -758,6 +774,10 @@ function clearForm() {
 
 function fillForm(p) {
   const s = (id, v) => { const el = document.getElementById(id); if(el) el.value = v||''; };
+  const idEl = document.getElementById('f-id');
+  idEl.value = p.id || '';
+  idEl.readOnly = true; // no cambiar ID de un proceso ya existente
+  idEl.style.background = 'var(--gray-100)';
   s('f-nombre',p.nombre); s('f-fecha',p.fecha_revision); s('f-actualizado',p.actualizado);
   s('f-detalle-actualiz',p.detalle_actualizacion); s('f-faqs',p.tiene_faqs);
   s('f-faqs-necesarias',p.faqs_necesarias); s('f-tipif',p.tiene_tipificaciones);
