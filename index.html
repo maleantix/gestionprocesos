@@ -6,7 +6,6 @@
 <title>Gestión de Revisiones</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-/* ── RESET & TOKENS ─────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -27,7 +26,7 @@
   --white:         #FFFFFF;
   --shadow-sm:     0 1px 3px rgba(0,0,0,.08);
   --shadow-md:     0 4px 16px rgba(0,0,0,.10);
-  --shadow-lg:     0 8px 32px rgba(0,0,0,.12);
+  --shadow-lg:     0 8px 32px rgba(0,0,0,.14);
   --radius:        10px;
   --radius-lg:     16px;
   --font:          'DM Sans', sans-serif;
@@ -38,333 +37,199 @@
 html { font-family: var(--font); background: var(--gray-50); color: var(--gray-900); }
 body { min-height: 100vh; display: flex; flex-direction: column; }
 
-/* ── TOPBAR ─────────────────────────────────── */
+/* ══ LOGIN ═════════════════════════════════════ */
+#screen-login {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--gray-50); padding: 24px;
+}
+.login-card {
+  background: var(--white); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg); padding: 40px 44px;
+  width: 100%; max-width: 380px;
+  border-top: 4px solid var(--orange);
+}
+.login-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.login-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--orange); }
+.login-brand span { font-size: 16px; font-weight: 700; letter-spacing: -.3px; }
+.login-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; letter-spacing: -.4px; }
+.login-card .subtitle { font-size: 13px; color: var(--gray-500); margin-bottom: 28px; }
+.login-field { margin-bottom: 16px; }
+.login-field label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: var(--gray-500); margin-bottom: 6px; }
+.login-field input {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--gray-300); border-radius: var(--radius);
+  font-family: var(--font); font-size: 14px; color: var(--gray-900);
+  background: var(--gray-50); outline: none; transition: var(--transition);
+}
+.login-field input:focus { border-color: var(--orange); background: var(--white); box-shadow: 0 0 0 3px var(--orange-light); }
+.btn-login {
+  width: 100%; padding: 12px; background: var(--orange); color: var(--white);
+  border: none; border-radius: var(--radius); cursor: pointer;
+  font-family: var(--font); font-size: 14px; font-weight: 700;
+  margin-top: 8px; transition: var(--transition);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-login:hover { background: var(--orange-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-login:disabled { background: var(--gray-300); cursor: not-allowed; transform: none; box-shadow: none; }
+.login-error {
+  background: var(--red-light); color: var(--red-block);
+  border: 1px solid #FFCDD2; border-radius: var(--radius);
+  padding: 10px 14px; font-size: 13px; font-weight: 500;
+  margin-bottom: 16px; display: none; align-items: center; gap: 8px;
+}
+.login-error.show { display: flex; }
+
+/* ══ APP ════════════════════════════════════════ */
+#screen-app { display: none; flex-direction: column; min-height: 100vh; }
+#screen-app.visible { display: flex; }
+
+/* ══ TOPBAR ════════════════════════════════════ */
 #topbar {
   position: sticky; top: 0; z-index: 100;
-  background: var(--white);
-  border-bottom: 3px solid var(--orange);
+  background: var(--white); border-bottom: 3px solid var(--orange);
   display: flex; align-items: center; gap: 16px;
-  padding: 0 28px; height: 60px;
-  box-shadow: var(--shadow-sm);
+  padding: 0 28px; height: 60px; box-shadow: var(--shadow-sm);
 }
-#topbar .brand {
-  display: flex; align-items: center; gap: 10px;
-  font-weight: 700; font-size: 16px; letter-spacing: -.3px;
-  color: var(--gray-900);
-}
-.brand-dot {
-  width: 10px; height: 10px; border-radius: 50%;
-  background: var(--orange); flex-shrink: 0;
-}
-#topbar nav { margin-left: auto; display: flex; gap: 4px; }
+#topbar .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -.3px; }
+.brand-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+#topbar nav { margin-left: auto; display: flex; gap: 4px; align-items: center; }
 #topbar nav button {
   border: none; background: none; cursor: pointer;
   font-family: var(--font); font-size: 13px; font-weight: 500;
-  color: var(--gray-500); padding: 6px 14px; border-radius: 6px;
-  transition: var(--transition);
+  color: var(--gray-500); padding: 6px 14px; border-radius: 6px; transition: var(--transition);
 }
 #topbar nav button:hover { background: var(--gray-100); color: var(--gray-900); }
 #topbar nav button.active { background: var(--orange-light); color: var(--orange-dark); }
-#sync-btn {
-  border: 1.5px solid var(--gray-300) !important;
-  color: var(--gray-700) !important;
-  display: flex; align-items: center; gap: 6px;
-}
+#sync-btn { border: 1.5px solid var(--gray-300) !important; color: var(--gray-700) !important; display: flex !important; align-items: center; gap: 6px; }
 #sync-btn:hover { border-color: var(--orange) !important; color: var(--orange) !important; background: var(--orange-light) !important; }
 #sync-icon { transition: transform .6s ease; font-size: 14px; }
 #sync-btn.loading #sync-icon { animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── LAYOUT ─────────────────────────────────── */
-#app { flex: 1; display: flex; flex-direction: column; }
+.user-badge { display: flex; align-items: center; gap: 7px; background: var(--gray-100); border-radius: 20px; padding: 5px 12px 5px 8px; font-size: 12px; font-weight: 600; color: var(--gray-700); }
+.user-avatar { width: 22px; height: 22px; border-radius: 50%; background: var(--orange); color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.btn-logout { background: none !important; border: 1.5px solid var(--gray-300) !important; color: var(--gray-500) !important; font-size: 12px !important; padding: 4px 10px !important; }
+.btn-logout:hover { border-color: var(--red-block) !important; color: var(--red-block) !important; background: var(--red-light) !important; }
 
-/* ── VIEWS ──────────────────────────────────── */
+/* ══ LAYOUT ════════════════════════════════════ */
+#app { flex: 1; display: flex; flex-direction: column; }
 .view { display: none; flex: 1; }
 .view.active { display: flex; flex-direction: column; }
 
-/* ── LIST VIEW ──────────────────────────────── */
+/* ══ LIST VIEW ═════════════════════════════════ */
 #view-list { padding: 28px; gap: 20px; }
-
-.list-header {
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-}
+.list-header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .list-header h1 { font-size: 22px; font-weight: 700; letter-spacing: -.4px; }
-.count-badge {
-  background: var(--orange); color: var(--white);
-  font-size: 11px; font-weight: 700;
-  padding: 2px 8px; border-radius: 20px;
-  font-family: var(--mono);
-}
-
-.toolbar {
-  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-}
-.search-wrap {
-  position: relative; flex: 1; min-width: 200px;
-}
-.search-wrap input {
-  width: 100%; padding: 8px 12px 8px 36px;
-  border: 1.5px solid var(--gray-300); border-radius: var(--radius);
-  font-family: var(--font); font-size: 13px; background: var(--white);
-  transition: var(--transition); outline: none;
-}
+.count-badge { background: var(--orange); color: var(--white); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; font-family: var(--mono); }
+.toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.search-wrap { position: relative; flex: 1; min-width: 200px; }
+.search-wrap input { width: 100%; padding: 8px 12px 8px 36px; border: 1.5px solid var(--gray-300); border-radius: var(--radius); font-family: var(--font); font-size: 13px; background: var(--white); transition: var(--transition); outline: none; }
 .search-wrap input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-light); }
 .search-wrap .ico { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--gray-500); font-size: 14px; }
-
-.filter-select {
-  padding: 8px 12px; border: 1.5px solid var(--gray-300);
-  border-radius: var(--radius); font-family: var(--font);
-  font-size: 13px; background: var(--white); cursor: pointer;
-  outline: none; transition: var(--transition);
-}
+.filter-select { padding: 8px 12px; border: 1.5px solid var(--gray-300); border-radius: var(--radius); font-family: var(--font); font-size: 13px; background: var(--white); cursor: pointer; outline: none; transition: var(--transition); }
 .filter-select:focus { border-color: var(--orange); }
-
-.btn-primary {
-  background: var(--orange); color: var(--white);
-  border: none; cursor: pointer; font-family: var(--font);
-  font-size: 13px; font-weight: 600; padding: 8px 18px;
-  border-radius: var(--radius); display: flex; align-items: center;
-  gap: 7px; transition: var(--transition); white-space: nowrap;
-}
+.btn-primary { background: var(--orange); color: var(--white); border: none; cursor: pointer; font-family: var(--font); font-size: 13px; font-weight: 600; padding: 8px 18px; border-radius: var(--radius); display: flex; align-items: center; gap: 7px; transition: var(--transition); white-space: nowrap; }
 .btn-primary:hover { background: var(--orange-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
-.btn-primary:active { transform: translateY(0); }
 
-/* TABLE */
-.table-wrap {
-  background: var(--white); border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm); overflow: hidden;
-  border: 1px solid var(--gray-100);
-}
+.table-wrap { background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; border: 1px solid var(--gray-100); }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 thead tr { background: var(--gray-900); }
-thead th {
-  padding: 11px 14px; text-align: left;
-  color: var(--white); font-weight: 600; font-size: 11px;
-  text-transform: uppercase; letter-spacing: .6px; white-space: nowrap;
-}
-thead th:first-child { border-radius: 0; }
-tbody tr {
-  border-bottom: 1px solid var(--gray-100);
-  cursor: pointer; transition: background .12s;
-}
+thead th { padding: 11px 14px; text-align: left; color: var(--white); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .6px; white-space: nowrap; }
+tbody tr { border-bottom: 1px solid var(--gray-100); cursor: pointer; transition: background .12s; }
 tbody tr:hover { background: var(--orange-light); }
 tbody tr:last-child { border-bottom: none; }
 td { padding: 11px 14px; color: var(--gray-700); }
 td.id-cell { font-family: var(--mono); font-size: 12px; color: var(--orange-dark); font-weight: 500; }
 td.name-cell { font-weight: 500; color: var(--gray-900); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 td.date-cell { font-family: var(--mono); font-size: 11px; color: var(--gray-500); }
-
-.pill {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 2px 8px; border-radius: 20px;
-  font-size: 11px; font-weight: 600; font-family: var(--mono);
-}
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: var(--mono); }
 .pill.yes  { background: #E8F5E9; color: #2E7D32; }
 .pill.no   { background: #FFEBEE; color: #C62828; }
 .pill.na   { background: var(--gray-100); color: var(--gray-500); }
 .pill.warn { background: #FFF8E1; color: #E65100; }
-
 .actions-cell { display: flex; gap: 6px; }
-.btn-icon {
-  width: 28px; height: 28px; border: none; cursor: pointer;
-  border-radius: 6px; display: flex; align-items: center;
-  justify-content: center; font-size: 13px; transition: var(--transition);
-}
-.btn-edit  { background: var(--orange-light); color: var(--orange-dark); }
-.btn-edit:hover  { background: var(--orange); color: white; }
-.btn-del   { background: var(--red-light); color: var(--red-block); }
-.btn-del:hover   { background: var(--red-block); color: white; }
-.btn-hist  { background: var(--blue-light); color: var(--blue-block); }
-.btn-hist:hover  { background: var(--blue-block); color: white; }
-
-.empty-state {
-  padding: 64px 24px; text-align: center; color: var(--gray-500);
-}
+.btn-icon { width: 28px; height: 28px; border: none; cursor: pointer; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: var(--transition); }
+.btn-edit { background: var(--orange-light); color: var(--orange-dark); }
+.btn-edit:hover { background: var(--orange); color: white; }
+.btn-del  { background: var(--red-light); color: var(--red-block); }
+.btn-del:hover  { background: var(--red-block); color: white; }
+.btn-hist { background: var(--blue-light); color: var(--blue-block); }
+.btn-hist:hover { background: var(--blue-block); color: white; }
+.empty-state { padding: 64px 24px; text-align: center; color: var(--gray-500); }
 .empty-state .big { font-size: 40px; margin-bottom: 12px; }
 .empty-state p { font-size: 14px; }
+.export-bar { display: flex; gap: 8px; align-items: center; padding: 10px 16px; background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-100); box-shadow: var(--shadow-sm); }
+.export-bar span { font-size: 12px; color: var(--gray-500); font-weight: 500; }
+.btn-export { background: none; border: 1.5px solid var(--gray-300); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-family: var(--font); font-size: 12px; font-weight: 500; color: var(--gray-700); transition: var(--transition); display: flex; align-items: center; gap: 5px; }
+.btn-export:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
 
-/* ── FORM VIEW ──────────────────────────────── */
+/* ══ FORM VIEW ═════════════════════════════════ */
 #view-form { padding: 28px; gap: 20px; max-width: 900px; margin: 0 auto; width: 100%; }
-
-.form-header {
-  display: flex; align-items: center; gap: 12px;
-}
-.btn-back {
-  background: none; border: 1.5px solid var(--gray-300);
-  border-radius: var(--radius); padding: 6px 12px;
-  font-family: var(--font); font-size: 13px; cursor: pointer;
-  display: flex; align-items: center; gap: 6px;
-  color: var(--gray-700); transition: var(--transition);
-}
+.form-header { display: flex; align-items: center; gap: 12px; }
+.btn-back { background: none; border: 1.5px solid var(--gray-300); border-radius: var(--radius); padding: 6px 12px; font-family: var(--font); font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--gray-700); transition: var(--transition); }
 .btn-back:hover { border-color: var(--orange); color: var(--orange); }
 .form-header h1 { font-size: 20px; font-weight: 700; }
-.form-id-badge {
-  margin-left: auto; font-family: var(--mono); font-size: 12px;
-  background: var(--orange-light); color: var(--orange-dark);
-  padding: 4px 10px; border-radius: 6px; font-weight: 600;
-}
-
-/* SECTIONS */
-.form-section {
-  background: var(--white); border-radius: var(--radius-lg);
-  border: 1.5px solid var(--gray-100); overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
-.section-title {
-  padding: 13px 20px; font-size: 12px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: .8px;
-  display: flex; align-items: center; gap: 8px;
-}
+.form-id-badge { margin-left: auto; font-family: var(--mono); font-size: 12px; background: var(--orange-light); color: var(--orange-dark); padding: 4px 10px; border-radius: 6px; font-weight: 600; }
+.form-section { background: var(--white); border-radius: var(--radius-lg); border: 1.5px solid var(--gray-100); overflow: hidden; box-shadow: var(--shadow-sm); }
+.section-title { padding: 13px 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; display: flex; align-items: center; gap: 8px; }
 .section-title.orange { background: var(--orange-light); color: var(--orange-dark); border-bottom: 2px solid var(--orange-mid); }
 .section-title.red    { background: var(--red-light);    color: var(--red-block);    border-bottom: 2px solid #FFCDD2; }
 .section-title.blue   { background: var(--blue-light);   color: var(--blue-block);   border-bottom: 2px solid #BBDEFB; }
 .section-title.gray   { background: var(--gray-100);     color: var(--gray-700);     border-bottom: 2px solid var(--gray-300); }
-
-.form-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 0; padding: 0;
-}
-.field {
-  padding: 14px 20px; border-bottom: 1px solid var(--gray-100);
-  display: flex; flex-direction: column; gap: 6px;
-}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.field { padding: 14px 20px; border-bottom: 1px solid var(--gray-100); display: flex; flex-direction: column; gap: 6px; }
 .field:nth-child(odd) { border-right: 1px solid var(--gray-100); }
 .field.full { grid-column: 1 / -1; border-right: none; }
-.field label {
-  font-size: 11px; font-weight: 600; color: var(--gray-500);
-  text-transform: uppercase; letter-spacing: .5px;
-}
+.field label { font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .5px; }
 .field label .req { color: var(--orange); margin-left: 2px; }
-
-.field input[type=text],
-.field input[type=date],
-.field select,
-.field textarea {
-  width: 100%; padding: 8px 10px;
-  border: 1.5px solid var(--gray-300); border-radius: 7px;
-  font-family: var(--font); font-size: 13px; color: var(--gray-900);
-  background: var(--gray-50); transition: var(--transition); outline: none;
-  resize: vertical;
-}
-.field input:focus, .field select:focus, .field textarea:focus {
-  border-color: var(--orange); background: var(--white);
-  box-shadow: 0 0 0 3px var(--orange-light);
-}
+.field input[type=text], .field input[type=date], .field select, .field textarea { width: 100%; padding: 8px 10px; border: 1.5px solid var(--gray-300); border-radius: 7px; font-family: var(--font); font-size: 13px; color: var(--gray-900); background: var(--gray-50); transition: var(--transition); outline: none; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--orange); background: var(--white); box-shadow: 0 0 0 3px var(--orange-light); }
 .field textarea { min-height: 72px; }
-
-.cond-field {
-  padding: 8px 20px 14px;
-  border-bottom: 1px solid var(--gray-100);
-  background: var(--gray-50);
-  display: none;
-}
+.cond-field { padding: 8px 20px 14px; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); display: none; }
 .cond-field.visible { display: block; }
-.cond-field label {
-  font-size: 11px; font-weight: 600; color: var(--gray-500);
-  text-transform: uppercase; letter-spacing: .5px;
-  display: block; margin-bottom: 6px;
-}
-.cond-field textarea, .cond-field input {
-  width: 100%; padding: 8px 10px;
-  border: 1.5px solid var(--orange-mid); border-radius: 7px;
-  font-family: var(--font); font-size: 13px; background: var(--white);
-  outline: none; transition: var(--transition); resize: vertical;
-}
-.cond-field textarea:focus, .cond-field input:focus {
-  border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-light);
-}
-
-.form-actions {
-  display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;
-}
-.btn-save {
-  background: var(--orange); color: var(--white); border: none;
-  cursor: pointer; font-family: var(--font); font-size: 14px;
-  font-weight: 600; padding: 10px 28px; border-radius: var(--radius);
-  display: flex; align-items: center; gap: 8px; transition: var(--transition);
-}
+.cond-field label { font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px; }
+.cond-field textarea, .cond-field input { width: 100%; padding: 8px 10px; border: 1.5px solid var(--orange-mid); border-radius: 7px; font-family: var(--font); font-size: 13px; background: var(--white); outline: none; transition: var(--transition); resize: vertical; }
+.cond-field textarea:focus, .cond-field input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-light); }
+.form-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.btn-save { background: var(--orange); color: var(--white); border: none; cursor: pointer; font-family: var(--font); font-size: 14px; font-weight: 600; padding: 10px 28px; border-radius: var(--radius); display: flex; align-items: center; gap: 8px; transition: var(--transition); }
 .btn-save:hover { background: var(--orange-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
-.btn-cancel {
-  background: none; border: 1.5px solid var(--gray-300); cursor: pointer;
-  font-family: var(--font); font-size: 14px; font-weight: 500;
-  padding: 10px 20px; border-radius: var(--radius); color: var(--gray-700);
-  transition: var(--transition);
-}
+.btn-cancel { background: none; border: 1.5px solid var(--gray-300); cursor: pointer; font-family: var(--font); font-size: 14px; font-weight: 500; padding: 10px 20px; border-radius: var(--radius); color: var(--gray-700); transition: var(--transition); }
 .btn-cancel:hover { border-color: var(--gray-500); color: var(--gray-900); }
 
-/* ── HISTORY VIEW ────────────────────────────── */
+/* ══ HISTORY VIEW ══════════════════════════════ */
 #view-history { padding: 28px; gap: 20px; }
 .history-header { display: flex; align-items: center; gap: 12px; }
 .history-header h1 { font-size: 20px; font-weight: 700; }
 .history-for { font-size: 13px; color: var(--gray-500); }
-
 .timeline { display: flex; flex-direction: column; gap: 0; }
-.timeline-item {
-  display: flex; gap: 16px; padding: 14px 0;
-  border-bottom: 1px solid var(--gray-100); align-items: flex-start;
-  animation: fadeIn .25s ease both;
-}
+.timeline-item { display: flex; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--gray-100); align-items: flex-start; animation: fadeIn .25s ease both; }
 @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
-.tl-dot {
-  width: 10px; height: 10px; border-radius: 50%;
-  background: var(--orange); margin-top: 5px; flex-shrink: 0;
-}
+.tl-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--orange); margin-top: 5px; flex-shrink: 0; }
 .tl-dot.create { background: #2E7D32; }
 .tl-dot.delete { background: var(--red-block); }
 .tl-time { font-family: var(--mono); font-size: 11px; color: var(--gray-500); white-space: nowrap; min-width: 130px; }
 .tl-campo { font-weight: 600; font-size: 13px; color: var(--gray-900); }
 .tl-change { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
-.tl-change span { font-family: var(--mono); }
 .tl-before { color: var(--red-block); text-decoration: line-through; }
 .tl-after  { color: #2E7D32; }
 
-/* ── TOAST ──────────────────────────────────── */
-#toast {
-  position: fixed; bottom: 24px; right: 24px; z-index: 999;
-  background: var(--gray-900); color: var(--white);
-  padding: 12px 18px; border-radius: var(--radius);
-  font-size: 13px; font-weight: 500;
-  box-shadow: var(--shadow-lg);
-  transform: translateY(80px); opacity: 0;
-  transition: .3s cubic-bezier(.34,1.56,.64,1);
-  display: flex; align-items: center; gap: 8px;
-  pointer-events: none;
-}
+/* ══ TOAST ═════════════════════════════════════ */
+#toast { position: fixed; bottom: 24px; right: 24px; z-index: 999; background: var(--gray-900); color: var(--white); padding: 12px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; box-shadow: var(--shadow-lg); transform: translateY(80px); opacity: 0; transition: .3s cubic-bezier(.34,1.56,.64,1); display: flex; align-items: center; gap: 8px; pointer-events: none; }
 #toast.show { transform: translateY(0); opacity: 1; }
-#toast.ok   { border-left: 4px solid #4CAF50; }
-#toast.err  { border-left: 4px solid var(--red-block); }
+#toast.ok  { border-left: 4px solid #4CAF50; }
+#toast.err { border-left: 4px solid var(--red-block); }
 
-/* ── LOADING OVERLAY ─────────────────────────── */
-#loading {
-  position: fixed; inset: 0; z-index: 200;
-  background: rgba(255,255,255,.85);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 16px; backdrop-filter: blur(3px);
-  transition: opacity .2s;
-}
+/* ══ LOADING ═══════════════════════════════════ */
+#loading { position: fixed; inset: 0; z-index: 200; background: rgba(255,255,255,.85); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; backdrop-filter: blur(3px); transition: opacity .2s; }
 #loading.hidden { opacity: 0; pointer-events: none; }
-.spinner {
-  width: 40px; height: 40px; border-radius: 50%;
-  border: 3px solid var(--orange-mid);
-  border-top-color: var(--orange);
-  animation: spin .7s linear infinite;
-}
+.spinner { width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--orange-mid); border-top-color: var(--orange); animation: spin .7s linear infinite; }
 #loading p { font-size: 13px; color: var(--gray-500); }
 
-/* ── MODAL CONFIRM ───────────────────────────── */
-#modal-overlay {
-  position: fixed; inset: 0; z-index: 300;
-  background: rgba(0,0,0,.4); backdrop-filter: blur(2px);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none; transition: .2s;
-}
+/* ══ MODAL ═════════════════════════════════════ */
+#modal-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,.4); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: .2s; }
 #modal-overlay.show { opacity: 1; pointer-events: all; }
-.modal-box {
-  background: var(--white); border-radius: var(--radius-lg);
-  padding: 28px; max-width: 380px; width: 90%;
-  box-shadow: var(--shadow-lg);
-  transform: scale(.95); transition: .2s;
-}
+.modal-box { background: var(--white); border-radius: var(--radius-lg); padding: 28px; max-width: 380px; width: 90%; box-shadow: var(--shadow-lg); transform: scale(.95); transition: .2s; }
 #modal-overlay.show .modal-box { transform: scale(1); }
 .modal-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
 .modal-box p  { font-size: 13px; color: var(--gray-500); margin-bottom: 20px; }
@@ -372,288 +237,273 @@ td.date-cell { font-family: var(--mono); font-size: 11px; color: var(--gray-500)
 .btn-modal-cancel { background:none; border:1.5px solid var(--gray-300); padding:8px 16px; border-radius:7px; cursor:pointer; font-family:var(--font); font-size:13px; }
 .btn-modal-ok { background:var(--red-block); color:white; border:none; padding:8px 16px; border-radius:7px; cursor:pointer; font-family:var(--font); font-size:13px; font-weight:600; }
 
-/* ── EXPORT BAR ──────────────────────────────── */
-.export-bar {
-  display: flex; gap: 8px; align-items: center;
-  padding: 10px 16px; background: var(--white);
-  border-radius: var(--radius); border: 1px solid var(--gray-100);
-  box-shadow: var(--shadow-sm);
-}
-.export-bar span { font-size: 12px; color: var(--gray-500); font-weight: 500; }
-.btn-export {
-  background: none; border: 1.5px solid var(--gray-300);
-  padding: 5px 12px; border-radius: 6px; cursor: pointer;
-  font-family: var(--font); font-size: 12px; font-weight: 500;
-  color: var(--gray-700); transition: var(--transition);
-  display: flex; align-items: center; gap: 5px;
-}
-.btn-export:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
-
-/* ── RESPONSIVE ──────────────────────────────── */
+/* ══ RESPONSIVE ════════════════════════════════ */
 @media(max-width:640px){
   .form-grid { grid-template-columns: 1fr; }
   .field:nth-child(odd) { border-right: none; }
   #view-list, #view-form, #view-history { padding: 16px; }
   .toolbar { flex-direction: column; align-items: stretch; }
+  .login-card { padding: 28px 24px; }
+  #topbar { padding: 0 16px; }
+  .user-badge span { display: none; }
 }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<div id="topbar">
-  <div class="brand">
-    <div class="brand-dot"></div>
-    Gestión de Revisiones
-  </div>
-  <nav>
-    <button id="nav-list" class="active" onclick="showView('list')">📋 Procesos</button>
-    <button id="nav-new" onclick="newProceso()">＋ Nuevo</button>
-    <button id="sync-btn" onclick="loadAll()">
-      <span id="sync-icon">↻</span> Sincronizar
+<!-- ══ LOGIN ════════════════════════════════════ -->
+<div id="screen-login">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-dot"></div>
+      <span>Gestión de Revisiones</span>
+    </div>
+    <h2>Acceder</h2>
+    <p class="subtitle">Introduce tus credenciales para continuar</p>
+    <div class="login-error" id="login-error">⚠ Usuario o contraseña incorrectos</div>
+    <div class="login-field">
+      <label>Usuario</label>
+      <input type="text" id="login-user" placeholder="tu usuario" autocomplete="username"/>
+    </div>
+    <div class="login-field">
+      <label>Contraseña</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="btn-login" id="login-btn" onclick="doLogin()">
+      <span id="login-btn-text">Entrar</span>
     </button>
-  </nav>
+  </div>
 </div>
 
-<div id="app">
-
-  <!-- ── LIST VIEW ── -->
-  <div id="view-list" class="view active">
-    <div class="list-header">
-      <h1>Procesos revisados</h1>
-      <span class="count-badge" id="count-badge">0</span>
-    </div>
-
-    <div class="toolbar">
-      <div class="search-wrap">
-        <span class="ico">🔍</span>
-        <input type="text" id="search-input" placeholder="Buscar por nombre o ID…" oninput="filterList()"/>
+<!-- ══ APP ══════════════════════════════════════ -->
+<div id="screen-app">
+  <div id="topbar">
+    <div class="brand"><div class="brand-dot"></div>Gestión de Revisiones</div>
+    <nav>
+      <button id="nav-list" class="active" onclick="showView('list')">📋 Procesos</button>
+      <button id="nav-new" onclick="newProceso()">＋ Nuevo</button>
+      <button id="sync-btn" onclick="loadAll()"><span id="sync-icon">↻</span> Sincronizar</button>
+      <div class="user-badge">
+        <div class="user-avatar" id="user-avatar">U</div>
+        <span id="user-name-label">Usuario</span>
       </div>
-      <select class="filter-select" id="filter-mejora" onchange="filterList()">
-        <option value="">Todas las mejoras</option>
-        <option value="Sí">Mejora necesaria: Sí</option>
-        <option value="No">Mejora necesaria: No</option>
-      </select>
-      <select class="filter-select" id="filter-ava" onchange="filterList()">
-        <option value="">Todos AVA</option>
-        <option value="Sí">Avatado: Sí</option>
-        <option value="No">Avatado: No</option>
-      </select>
-      <div class="export-bar">
-        <span>Exportar:</span>
-        <button class="btn-export" onclick="exportCSV()">📄 CSV</button>
-        <button class="btn-export" onclick="exportJSON()">{ } JSON</button>
-      </div>
-      <button class="btn-primary" onclick="newProceso()">＋ Nuevo proceso</button>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre del contenido</th>
-            <th>Fecha rev.</th>
-            <th>Actualizado</th>
-            <th>Mejora</th>
-            <th>AVA</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tabla-body">
-          <tr><td colspan="7"><div class="empty-state"><div class="big">📂</div><p>Cargando procesos…</p></div></td></tr>
-        </tbody>
-      </table>
-    </div>
+      <button class="btn-logout" onclick="doLogout()">Salir</button>
+    </nav>
   </div>
 
-  <!-- ── FORM VIEW ── -->
-  <div id="view-form" class="view">
-    <div class="form-header">
-      <button class="btn-back" onclick="showView('list')">← Volver</button>
-      <h1 id="form-title">Nuevo proceso</h1>
-      <span class="form-id-badge" id="form-id-badge" style="display:none"></span>
-    </div>
+  <div id="app">
 
-    <!-- DATOS GENERALES -->
-    <div class="form-section">
-      <div class="section-title gray">📌 Datos generales</div>
-      <div class="form-grid">
-        <div class="field">
-          <label>Nombre del contenido <span class="req">*</span></label>
-          <input type="text" id="f-nombre" placeholder="Ej: Manual de bienvenida"/>
+    <!-- LIST -->
+    <div id="view-list" class="view active">
+      <div class="list-header">
+        <h1>Procesos revisados</h1>
+        <span class="count-badge" id="count-badge">0</span>
+      </div>
+      <div class="toolbar">
+        <div class="search-wrap">
+          <span class="ico">🔍</span>
+          <input type="text" id="search-input" placeholder="Buscar por nombre o ID…" oninput="filterList()"/>
         </div>
-        <div class="field">
-          <label>Fecha de revisión</label>
-          <input type="date" id="f-fecha"/>
+        <select class="filter-select" id="filter-mejora" onchange="filterList()">
+          <option value="">Todas las mejoras</option>
+          <option value="Sí">Mejora necesaria: Sí</option>
+          <option value="No">Mejora necesaria: No</option>
+        </select>
+        <select class="filter-select" id="filter-ava" onchange="filterList()">
+          <option value="">Todos AVA</option>
+          <option value="Sí">Avatado: Sí</option>
+          <option value="No">Avatado: No</option>
+        </select>
+        <div class="export-bar">
+          <span>Exportar:</span>
+          <button class="btn-export" onclick="exportCSV()">📄 CSV</button>
+          <button class="btn-export" onclick="exportJSON()">{ } JSON</button>
         </div>
+        <button class="btn-primary" onclick="newProceso()">＋ Nuevo proceso</button>
       </div>
-    </div>
-
-    <!-- CONTENIDO -->
-    <div class="form-section">
-      <div class="section-title orange">📄 Contenido</div>
-      <div class="form-grid">
-
-        <div class="field">
-          <label>¿Está actualizado?</label>
-          <select id="f-actualizado" onchange="toggleCond('f-actualizado','no','cond-actualiz')">
-            <option value="">— Selecciona —</option>
-            <option>Sí</option><option>No</option><option>N/A</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>¿Tiene preguntas frecuentes (FAQs)?</label>
-          <select id="f-faqs" onchange="toggleCond('f-faqs','No','cond-faqs')">
-            <option value="">— Selecciona —</option>
-            <option>Sí</option><option>No</option><option>N/A</option>
-          </select>
-        </div>
-      </div>
-      <div class="cond-field" id="cond-actualiz">
-        <label>Si No: detalla nombres e IDs a actualizar</label>
-        <textarea id="f-detalle-actualiz" rows="2"></textarea>
-      </div>
-      <div class="cond-field" id="cond-faqs">
-        <label>Si No: ¿son necesarias? ¿Por qué?</label>
-        <textarea id="f-faqs-necesarias" rows="2"></textarea>
-      </div>
-
-      <div class="form-grid">
-        <div class="field">
-          <label>¿Tiene pestaña de Tipificaciones?</label>
-          <select id="f-tipif" onchange="toggleCond('f-tipif','No','cond-tipif')">
-            <option value="">— Selecciona —</option>
-            <option>Sí</option><option>No</option><option>N/A</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>¿Tiene relacionada una oferta comercial?</label>
-          <select id="f-oferta" onchange="toggleCond('f-oferta','Sí','cond-oferta')">
-            <option value="">— Selecciona —</option>
-            <option>Sí</option><option>No</option><option>N/A</option>
-          </select>
-        </div>
-      </div>
-      <div class="cond-field" id="cond-tipif">
-        <label>Si No: ¿es necesaria? ¿Por qué?</label>
-        <textarea id="f-tipif-necesaria" rows="2"></textarea>
-      </div>
-      <div class="cond-field" id="cond-oferta">
-        <label>Si Sí: ¿es necesario realizar alguna mejora? ¿Por qué?</label>
-        <textarea id="f-mejora-oferta" rows="2"></textarea>
-      </div>
-
-      <div class="form-grid">
-        <div class="field">
-          <label>¿Hay avisos publicados relacionados?</label>
-          <select id="f-avisos" onchange="toggleCond('f-avisos','Sí','cond-avisos')">
-            <option value="">— Selecciona —</option>
-            <option>Sí</option><option>No</option><option>N/A</option>
-          </select>
-        </div>
-        <div class="field"></div>
-      </div>
-      <div class="cond-field" id="cond-avisos">
-        <label>Si Sí: ¿la información está incluida en el contenido?</label>
-        <textarea id="f-info-incluida" rows="2"></textarea>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>ID</th><th>Nombre del contenido</th><th>Fecha rev.</th>
+            <th>Actualizado</th><th>Mejora</th><th>AVA</th><th>Acciones</th>
+          </tr></thead>
+          <tbody id="tabla-body">
+            <tr><td colspan="7"><div class="empty-state"><div class="big">📂</div><p>Cargando…</p></div></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <!-- PROPUESTA DE MEJORA -->
-    <div class="form-section">
-      <div class="section-title red">🔧 Propuesta de mejora</div>
-      <div class="form-grid">
-        <div class="field full">
-          <label>¿Es necesario realizar una mejora del contenido?</label>
-          <select id="f-mejora-nec" onchange="toggleCond('f-mejora-nec','Sí','cond-mejora')">
-            <option value="">— Selecciona —</option>
-            <option>Sí</option><option>No</option><option>N/A</option>
-          </select>
+    <!-- FORM -->
+    <div id="view-form" class="view">
+      <div class="form-header">
+        <button class="btn-back" onclick="showView('list')">← Volver</button>
+        <h1 id="form-title">Nuevo proceso</h1>
+        <span class="form-id-badge" id="form-id-badge" style="display:none"></span>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title gray">📌 Datos generales</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Nombre del contenido <span class="req">*</span></label>
+            <input type="text" id="f-nombre" placeholder="Ej: Manual de bienvenida"/>
+          </div>
+          <div class="field">
+            <label>Fecha de revisión</label>
+            <input type="date" id="f-fecha"/>
+          </div>
         </div>
       </div>
-      <div class="cond-field" id="cond-mejora" style="display:none">
-        <label>Resumen de la mejora</label>
-        <textarea id="f-resumen-mejora" rows="2" placeholder="Breve descripción de en qué consiste la mejora…"></textarea>
-        <br/>
-        <label style="margin-top:10px;display:block">Si se ha creado nuevo contenido: nombre e ID</label>
-        <input type="text" id="f-nuevo-contenido-id" placeholder="Ej: Manual tarifas v2 · P045"/>
-        <br/>
-        <label style="margin-top:10px;display:block">Feedback del servicio / TL / agente que motivó la decisión</label>
-        <textarea id="f-feedback-servicio" rows="2"></textarea>
-        <br/>
-        <label style="margin-top:10px;display:block">¿Con qué servicio / TL / agente se validó la propuesta?</label>
-        <input type="text" id="f-validado-por" placeholder="Ej: Ana García · TL Operaciones"/>
+
+      <div class="form-section">
+        <div class="section-title orange">📄 Contenido</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>¿Está actualizado?</label>
+            <select id="f-actualizado" onchange="toggleCond('f-actualizado','No','cond-actualiz')">
+              <option value="">— Selecciona —</option><option>Sí</option><option>No</option><option>N/A</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>¿Tiene preguntas frecuentes (FAQs)?</label>
+            <select id="f-faqs" onchange="toggleCond('f-faqs','No','cond-faqs')">
+              <option value="">— Selecciona —</option><option>Sí</option><option>No</option><option>N/A</option>
+            </select>
+          </div>
+        </div>
+        <div class="cond-field" id="cond-actualiz">
+          <label>Si No: detalla nombres e IDs a actualizar</label>
+          <textarea id="f-detalle-actualiz" rows="2"></textarea>
+        </div>
+        <div class="cond-field" id="cond-faqs">
+          <label>Si No: ¿son necesarias? ¿Por qué?</label>
+          <textarea id="f-faqs-necesarias" rows="2"></textarea>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label>¿Tiene pestaña de Tipificaciones?</label>
+            <select id="f-tipif" onchange="toggleCond('f-tipif','No','cond-tipif')">
+              <option value="">— Selecciona —</option><option>Sí</option><option>No</option><option>N/A</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>¿Tiene relacionada una oferta comercial?</label>
+            <select id="f-oferta" onchange="toggleCond('f-oferta','Sí','cond-oferta')">
+              <option value="">— Selecciona —</option><option>Sí</option><option>No</option><option>N/A</option>
+            </select>
+          </div>
+        </div>
+        <div class="cond-field" id="cond-tipif">
+          <label>Si No: ¿es necesaria? ¿Por qué?</label>
+          <textarea id="f-tipif-necesaria" rows="2"></textarea>
+        </div>
+        <div class="cond-field" id="cond-oferta">
+          <label>Si Sí: ¿es necesario realizar alguna mejora? ¿Por qué?</label>
+          <textarea id="f-mejora-oferta" rows="2"></textarea>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label>¿Hay avisos publicados relacionados?</label>
+            <select id="f-avisos" onchange="toggleCond('f-avisos','Sí','cond-avisos')">
+              <option value="">— Selecciona —</option><option>Sí</option><option>No</option><option>N/A</option>
+            </select>
+          </div>
+          <div class="field"></div>
+        </div>
+        <div class="cond-field" id="cond-avisos">
+          <label>Si Sí: ¿la información está incluida en el contenido?</label>
+          <textarea id="f-info-incluida" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title red">🔧 Propuesta de mejora</div>
+        <div class="form-grid">
+          <div class="field full">
+            <label>¿Es necesario realizar una mejora del contenido?</label>
+            <select id="f-mejora-nec" onchange="toggleCond('f-mejora-nec','Sí','cond-mejora')">
+              <option value="">— Selecciona —</option><option>Sí</option><option>No</option><option>N/A</option>
+            </select>
+          </div>
+        </div>
+        <div class="cond-field" id="cond-mejora">
+          <label>Resumen de la mejora</label>
+          <textarea id="f-resumen-mejora" rows="2" placeholder="Breve descripción…"></textarea>
+          <br/>
+          <label style="margin-top:10px;display:block">Si se ha creado nuevo contenido: nombre e ID</label>
+          <input type="text" id="f-nuevo-contenido-id" placeholder="Ej: Manual tarifas v2 · P045"/>
+          <br/>
+          <label style="margin-top:10px;display:block">Feedback del servicio / TL / agente que motivó la decisión</label>
+          <textarea id="f-feedback-servicio" rows="2"></textarea>
+          <br/>
+          <label style="margin-top:10px;display:block">¿Con qué servicio / TL / agente se validó la propuesta?</label>
+          <input type="text" id="f-validado-por" placeholder="Ej: Ana García · TL Operaciones"/>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title blue">🤖 AVA</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>¿El contenido está completamente avatado?</label>
+            <select id="f-avatado">
+              <option value="">— Selecciona —</option><option>Sí</option><option>No</option><option>N/A</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>¿Cómo se localiza en AVA? (caso de uso / enlaces a DO)</label>
+            <input type="text" id="f-loc-ava" placeholder="Ej: AVA > Procesos > Bienvenida"/>
+          </div>
+          <div class="field full">
+            <label>¿Ves necesario realizar propuesta de caso de uso para AVA?</label>
+            <select id="f-caso-ava" onchange="toggleCond('f-caso-ava','Sí','cond-ava')">
+              <option value="">— Selecciona —</option><option>Sí</option><option>No</option><option>N/A</option>
+            </select>
+          </div>
+        </div>
+        <div class="cond-field" id="cond-ava">
+          <label>Resumen del caso de uso AVA</label>
+          <textarea id="f-resumen-ava" rows="2"></textarea>
+          <br/>
+          <label style="margin-top:10px;display:block">Feedback del servicio / TL / agente</label>
+          <textarea id="f-feedback-ava" rows="2"></textarea>
+          <br/>
+          <label style="margin-top:10px;display:block">¿Con qué servicio / TL / agente se validó el caso de uso?</label>
+          <input type="text" id="f-validado-ava" placeholder="Ej: Carlos López · Servicio Ventas"/>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="showView('list')">Cancelar</button>
+        <button class="btn-save" onclick="saveProceso()">💾 Guardar proceso</button>
       </div>
     </div>
 
-    <!-- AVA -->
-    <div class="form-section">
-      <div class="section-title blue">🤖 AVA</div>
-      <div class="form-grid">
-        <div class="field">
-          <label>¿El contenido está completamente avatado?</label>
-          <select id="f-avatado">
-            <option value="">— Selecciona —</option>
-            <option>Sí</option><option>No</option><option>N/A</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>¿Cómo se localiza en AVA? (caso de uso / enlaces a DO)</label>
-          <input type="text" id="f-loc-ava" placeholder="Ej: AVA > Procesos > Bienvenida"/>
-        </div>
-        <div class="field full">
-          <label>¿Ves necesario realizar propuesta de caso de uso para AVA?</label>
-          <select id="f-caso-ava" onchange="toggleCond('f-caso-ava','Sí','cond-ava')">
-            <option value="">— Selecciona —</option>
-            <option>Sí</option><option>No</option><option>N/A</option>
-          </select>
-        </div>
+    <!-- HISTORY -->
+    <div id="view-history" class="view">
+      <div class="history-header">
+        <button class="btn-back" onclick="showView('list')">← Volver</button>
+        <h1>Historial de cambios</h1>
+        <span class="history-for" id="history-for"></span>
       </div>
-      <div class="cond-field" id="cond-ava" style="display:none">
-        <label>Resumen del caso de uso AVA</label>
-        <textarea id="f-resumen-ava" rows="2"></textarea>
-        <br/>
-        <label style="margin-top:10px;display:block">Feedback del servicio / TL / agente</label>
-        <textarea id="f-feedback-ava" rows="2"></textarea>
-        <br/>
-        <label style="margin-top:10px;display:block">¿Con qué servicio / TL / agente se validó el caso de uso?</label>
-        <input type="text" id="f-validado-ava" placeholder="Ej: Carlos López · Servicio Ventas"/>
+      <div class="table-wrap">
+        <div class="timeline" id="timeline-body" style="padding:0 20px">
+          <div class="empty-state"><div class="big">🕐</div><p>Sin registros</p></div>
+        </div>
       </div>
     </div>
 
-    <div class="form-actions">
-      <button class="btn-cancel" onclick="showView('list')">Cancelar</button>
-      <button class="btn-save" onclick="saveProceso()">💾 Guardar proceso</button>
-    </div>
   </div>
-
-  <!-- ── HISTORY VIEW ── -->
-  <div id="view-history" class="view">
-    <div class="history-header">
-      <button class="btn-back" onclick="showView('list')">← Volver</button>
-      <h1>Historial de cambios</h1>
-      <span class="history-for" id="history-for"></span>
-    </div>
-    <div class="table-wrap">
-      <div class="timeline" id="timeline-body" style="padding:0 20px">
-        <div class="empty-state"><div class="big">🕐</div><p>Sin registros</p></div>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /app -->
+</div>
 
 <!-- LOADING -->
-<div id="loading">
-  <div class="spinner"></div>
-  <p id="loading-msg">Cargando…</p>
-</div>
+<div id="loading"><div class="spinner"></div><p id="loading-msg">Cargando…</p></div>
 
 <!-- TOAST -->
 <div id="toast"></div>
 
-<!-- MODAL CONFIRM -->
+<!-- MODAL -->
 <div id="modal-overlay">
   <div class="modal-box">
     <h3>¿Eliminar proceso?</h3>
@@ -666,69 +516,117 @@ td.date-cell { font-family: var(--mono); font-size: 11px; color: var(--gray-500)
 </div>
 
 <script>
-// ══════════════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════════════
-const API = 'https://script.google.com/macros/s/AKfycbwLPSvtjGEoHaksgP_DVXtf1-6xZq3XRFDMHWzI_HebuuGSPlAXHugvsmFXofH0iczZ/exec';
+const API         = 'https://script.google.com/macros/s/AKfycbwLPSvtjGEoHaksgP_DVXtf1-6xZq3XRFDMHWzI_HebuuGSPlAXHugvsmFXofH0iczZ/exec';
+const SESSION_KEY = 'rev_session';
 
-// ══════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════
 let allProcesos = [];
 let editingId   = null;
 let deleteId    = null;
-let currentView = 'list';
+let session     = null;
 
-// ══════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════
+// ── INIT ──────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Fecha por defecto = hoy
-  document.getElementById('f-fecha').value = new Date().toISOString().split('T')[0];
-  loadAll();
+  try {
+    const saved = sessionStorage.getItem(SESSION_KEY);
+    if (saved) { session = JSON.parse(saved); startApp(); return; }
+  } catch(e) {}
+  hideLoading();
+  document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('login-user').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('login-pass').focus(); });
 });
 
-// ══════════════════════════════════════════════
-// API CALLS
-// ══════════════════════════════════════════════
-async function apiFetch(params) {
-  const url = API + '?' + new URLSearchParams(params);
-  const r = await fetch(url);
-  return r.json();
-}
+// ── AUTH ──────────────────────────────────────
+async function doLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if (!user || !pass) { showLoginError(); return; }
 
-async function apiPost(body) {
-  const r = await fetch(API, {
-    method: 'POST',
-    body: JSON.stringify(body)
-  });
-  return r.json();
-}
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true;
+  document.getElementById('login-btn-text').textContent = 'Verificando…';
+  document.getElementById('login-error').classList.remove('show');
+  showLoading('Verificando credenciales…');
 
-async function loadAll() {
-  setSync(true);
-  showLoading('Sincronizando con Google Sheets…');
   try {
-    const data = await apiFetch({ action: 'getAll' });
+    const data = await apiFetch({ action: 'getAll', user, pass });
+    if (data.error === 'unauthorized') {
+      showLoginError();
+    } else {
+      session = { user, pass };
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+      startApp(data.procesos || []);
+    }
+  } catch(e) { toast('Error de conexión', 'err'); }
+
+  hideLoading();
+  btn.disabled = false;
+  document.getElementById('login-btn-text').textContent = 'Entrar';
+}
+
+function showLoginError() {
+  document.getElementById('login-error').classList.add('show');
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-pass').focus();
+}
+
+function doLogout() {
+  session = null;
+  sessionStorage.removeItem(SESSION_KEY);
+  allProcesos = [];
+  document.getElementById('screen-app').classList.remove('visible');
+  document.getElementById('screen-login').style.display = 'flex';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+}
+
+function startApp(procesos) {
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('screen-app').classList.add('visible');
+  document.getElementById('user-avatar').textContent = session.user.slice(0,2).toUpperCase();
+  document.getElementById('user-name-label').textContent = session.user;
+  document.getElementById('f-fecha').value = new Date().toISOString().split('T')[0];
+  if (procesos !== undefined) { allProcesos = procesos; renderList(allProcesos); hideLoading(); }
+  else loadAll();
+}
+
+// ── API ───────────────────────────────────────
+async function apiFetch(params) {
+  const r = await fetch(API + '?' + new URLSearchParams(params));
+  return r.json();
+}
+async function apiPost(body) {
+  const r = await fetch(API, { method: 'POST', body: JSON.stringify(body) });
+  return r.json();
+}
+async function apiGet(params)  { return apiFetch({ ...params, user: session.user, pass: session.pass }); }
+async function apiSend(body)   { return apiPost({  ...body,   user: session.user, pass: session.pass }); }
+
+function handleUnauth(data) {
+  if (data && data.error === 'unauthorized') { doLogout(); return true; }
+  return false;
+}
+
+// ── OPERACIONES ───────────────────────────────
+async function loadAll() {
+  setSync(true); showLoading('Sincronizando con Google Sheets…');
+  try {
+    const data = await apiGet({ action: 'getAll' });
+    if (handleUnauth(data)) return;
     allProcesos = data.procesos || [];
     renderList(allProcesos);
     toast('✓ Sincronizado — ' + allProcesos.length + ' procesos', 'ok');
-  } catch(e) {
-    toast('Error al conectar con el servidor', 'err');
-  }
-  hideLoading();
-  setSync(false);
+  } catch(e) { toast('Error al conectar con el servidor', 'err'); }
+  hideLoading(); setSync(false);
 }
 
 async function loadHistory(id, nombre) {
   showLoading('Cargando historial…');
   try {
-    const data = await apiFetch({ action: 'getHistory', id });
+    const data = await apiGet({ action: 'getHistory', id });
+    if (handleUnauth(data)) return;
     renderHistory(data.historial || [], nombre);
     showView('history');
-  } catch(e) {
-    toast('Error al cargar historial', 'err');
-  }
+  } catch(e) { toast('Error al cargar historial', 'err'); }
   hideLoading();
 }
 
@@ -737,328 +635,182 @@ async function saveProceso() {
   if (!nombre) { toast('⚠ El nombre del contenido es obligatorio', 'err'); return; }
 
   const data = {
-    id:                  editingId || '',
-    nombre,
-    fecha_revision:      document.getElementById('f-fecha').value,
-    actualizado:         document.getElementById('f-actualizado').value,
+    id: editingId || '', nombre,
+    fecha_revision:        document.getElementById('f-fecha').value,
+    actualizado:           document.getElementById('f-actualizado').value,
     detalle_actualizacion: document.getElementById('f-detalle-actualiz').value,
-    tiene_faqs:          document.getElementById('f-faqs').value,
-    faqs_necesarias:     document.getElementById('f-faqs-necesarias').value,
-    tiene_tipificaciones:document.getElementById('f-tipif').value,
-    tipif_necesaria:     document.getElementById('f-tipif-necesaria').value,
-    tiene_oferta:        document.getElementById('f-oferta').value,
-    mejora_oferta:       document.getElementById('f-mejora-oferta').value,
-    avisos_publicados:   document.getElementById('f-avisos').value,
-    info_incluida:       document.getElementById('f-info-incluida').value,
-    mejora_necesaria:    document.getElementById('f-mejora-nec').value,
-    resumen_mejora:      document.getElementById('f-resumen-mejora').value,
-    nuevo_contenido_id:  document.getElementById('f-nuevo-contenido-id').value,
-    feedback_servicio:   document.getElementById('f-feedback-servicio').value,
-    validado_por:        document.getElementById('f-validado-por').value,
-    avatado:             document.getElementById('f-avatado').value,
-    localizacion_ava:    document.getElementById('f-loc-ava').value,
-    caso_uso_ava:        document.getElementById('f-caso-ava').value,
-    resumen_caso_uso_ava:document.getElementById('f-resumen-ava').value,
-    feedback_ava:        document.getElementById('f-feedback-ava').value,
-    validado_ava:        document.getElementById('f-validado-ava').value,
+    tiene_faqs:            document.getElementById('f-faqs').value,
+    faqs_necesarias:       document.getElementById('f-faqs-necesarias').value,
+    tiene_tipificaciones:  document.getElementById('f-tipif').value,
+    tipif_necesaria:       document.getElementById('f-tipif-necesaria').value,
+    tiene_oferta:          document.getElementById('f-oferta').value,
+    mejora_oferta:         document.getElementById('f-mejora-oferta').value,
+    avisos_publicados:     document.getElementById('f-avisos').value,
+    info_incluida:         document.getElementById('f-info-incluida').value,
+    mejora_necesaria:      document.getElementById('f-mejora-nec').value,
+    resumen_mejora:        document.getElementById('f-resumen-mejora').value,
+    nuevo_contenido_id:    document.getElementById('f-nuevo-contenido-id').value,
+    feedback_servicio:     document.getElementById('f-feedback-servicio').value,
+    validado_por:          document.getElementById('f-validado-por').value,
+    avatado:               document.getElementById('f-avatado').value,
+    localizacion_ava:      document.getElementById('f-loc-ava').value,
+    caso_uso_ava:          document.getElementById('f-caso-ava').value,
+    resumen_caso_uso_ava:  document.getElementById('f-resumen-ava').value,
+    feedback_ava:          document.getElementById('f-feedback-ava').value,
+    validado_ava:          document.getElementById('f-validado-ava').value,
   };
 
   showLoading('Guardando…');
   try {
-    const res = await apiPost({ action: 'save', data });
-    if (res.ok) {
-      toast(res.nueva ? '✓ Proceso creado: ' + res.id : '✓ Proceso actualizado', 'ok');
-      await loadAll();
-      showView('list');
-    } else {
-      toast('Error: ' + (res.error || 'desconocido'), 'err');
-    }
-  } catch(e) {
-    toast('Error de conexión', 'err');
-  }
+    const res = await apiSend({ action: 'save', data });
+    if (handleUnauth(res)) return;
+    if (res.ok) { toast(res.nueva ? '✓ Proceso creado: ' + res.id : '✓ Proceso actualizado', 'ok'); await loadAll(); showView('list'); }
+    else toast('Error: ' + (res.error || 'desconocido'), 'err');
+  } catch(e) { toast('Error de conexión', 'err'); }
   hideLoading();
 }
 
 async function confirmDelete() {
-  closeModal();
-  showLoading('Eliminando…');
+  closeModal(); showLoading('Eliminando…');
   try {
-    const res = await apiPost({ action: 'delete', id: deleteId });
-    if (res.ok) {
-      toast('✓ Proceso eliminado', 'ok');
-      await loadAll();
-    } else {
-      toast('Error: ' + (res.error || ''), 'err');
-    }
-  } catch(e) {
-    toast('Error de conexión', 'err');
-  }
+    const res = await apiSend({ action: 'delete', id: deleteId });
+    if (handleUnauth(res)) return;
+    if (res.ok) { toast('✓ Proceso eliminado', 'ok'); await loadAll(); }
+    else toast('Error: ' + (res.error || ''), 'err');
+  } catch(e) { toast('Error de conexión', 'err'); }
   hideLoading();
 }
 
-// ══════════════════════════════════════════════
-// RENDER
-// ══════════════════════════════════════════════
+// ── RENDER ────────────────────────────────────
 function renderList(list) {
-  const tbody = document.getElementById('tabla-body');
   document.getElementById('count-badge').textContent = list.length;
-
+  const tbody = document.getElementById('tabla-body');
   if (!list.length) {
     tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="big">📂</div><p>No hay procesos. ¡Crea el primero!</p></div></td></tr>`;
     return;
   }
-
   tbody.innerHTML = list.map(p => `
     <tr onclick="editProceso('${p.id}')">
-      <td class="id-cell">${p.id || '—'}</td>
+      <td class="id-cell">${p.id||'—'}</td>
       <td class="name-cell">${esc(p.nombre)}</td>
       <td class="date-cell">${fmtDate(p.fecha_revision)}</td>
       <td>${pillYN(p.actualizado)}</td>
-      <td>${pillYN(p.mejora_necesaria, true)}</td>
+      <td>${pillYN(p.mejora_necesaria,true)}</td>
       <td>${pillYN(p.avatado)}</td>
       <td class="actions-cell" onclick="event.stopPropagation()">
-        <button class="btn-icon btn-edit" title="Editar" onclick="editProceso('${p.id}')">✏️</button>
+        <button class="btn-icon btn-edit" title="Editar"    onclick="editProceso('${p.id}')">✏️</button>
         <button class="btn-icon btn-hist" title="Historial" onclick="loadHistory('${p.id}','${esc(p.nombre)}')">🕐</button>
-        <button class="btn-icon btn-del"  title="Eliminar" onclick="askDelete('${p.id}','${esc(p.nombre)}')">🗑️</button>
+        <button class="btn-icon btn-del"  title="Eliminar"  onclick="askDelete('${p.id}','${esc(p.nombre)}')">🗑️</button>
       </td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
 function filterList() {
-  const q      = document.getElementById('search-input').value.toLowerCase();
-  const mejora = document.getElementById('filter-mejora').value;
-  const ava    = document.getElementById('filter-ava').value;
-
-  const filtered = allProcesos.filter(p => {
-    const matchQ = !q || p.nombre?.toLowerCase().includes(q) || p.id?.toLowerCase().includes(q);
-    const matchM = !mejora || p.mejora_necesaria === mejora;
-    const matchA = !ava    || p.avatado === ava;
-    return matchQ && matchM && matchA;
-  });
-  renderList(filtered);
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const m = document.getElementById('filter-mejora').value;
+  const a = document.getElementById('filter-ava').value;
+  renderList(allProcesos.filter(p =>
+    (!q || p.nombre?.toLowerCase().includes(q) || p.id?.toLowerCase().includes(q)) &&
+    (!m || p.mejora_necesaria === m) &&
+    (!a || p.avatado === a)
+  ));
 }
 
 function renderHistory(hist, nombre) {
   document.getElementById('history-for').textContent = nombre ? '— ' + nombre : '';
   const el = document.getElementById('timeline-body');
-
-  if (!hist.length) {
-    el.innerHTML = `<div class="empty-state"><div class="big">🕐</div><p>Sin registros de cambios</p></div>`;
-    return;
-  }
-
+  if (!hist.length) { el.innerHTML = `<div class="empty-state"><div class="big">🕐</div><p>Sin registros de cambios</p></div>`; return; }
   el.innerHTML = hist.map((h, i) => {
-    const isCreate = h.campo === 'CREACIÓN';
-    const isDelete = h.campo === 'ELIMINACIÓN';
+    const isCreate = h.campo === 'CREACIÓN', isDelete = h.campo === 'ELIMINACIÓN';
     const dotClass = isCreate ? 'create' : isDelete ? 'delete' : '';
     const changeHtml = isCreate || isDelete
       ? `<span class="tl-after">${esc(h.valor_nuevo)}</span>`
-      : `<span class="tl-before">${esc(h.valor_antes) || '(vacío)'}</span>
-         → <span class="tl-after">${esc(h.valor_nuevo) || '(vacío)'}</span>`;
-
+      : `<span class="tl-before">${esc(h.valor_antes)||'(vacío)'}</span> → <span class="tl-after">${esc(h.valor_nuevo)||'(vacío)'}</span>`;
     return `<div class="timeline-item" style="animation-delay:${i*0.04}s">
       <div class="tl-dot ${dotClass}"></div>
       <div class="tl-time">${fmtDateTime(h.timestamp)}</div>
-      <div>
-        <div class="tl-campo">${esc(h.campo)}</div>
-        <div class="tl-change">${changeHtml}</div>
-      </div>
+      <div><div class="tl-campo">${esc(h.campo)}</div><div class="tl-change">${changeHtml}</div></div>
     </div>`;
   }).join('');
 }
 
-// ══════════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════════
+// ── NAVEGACIÓN ────────────────────────────────
 function showView(v) {
-  currentView = v;
   document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
   document.getElementById('view-' + v).classList.add('active');
   document.querySelectorAll('#topbar nav button').forEach(b => b.classList.remove('active'));
   if (v === 'list') document.getElementById('nav-list').classList.add('active');
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
 }
+function newProceso() { editingId = null; clearForm(); document.getElementById('form-title').textContent = 'Nuevo proceso'; document.getElementById('form-id-badge').style.display = 'none'; showView('form'); document.getElementById('nav-new').classList.add('active'); }
+function editProceso(id) { const p = allProcesos.find(x => x.id === id); if (!p) return; editingId = id; clearForm(); fillForm(p); document.getElementById('form-title').textContent = 'Editar proceso'; const b = document.getElementById('form-id-badge'); b.textContent = id; b.style.display = ''; showView('form'); }
 
-function newProceso() {
-  editingId = null;
-  clearForm();
-  document.getElementById('form-title').textContent = 'Nuevo proceso';
-  document.getElementById('form-id-badge').style.display = 'none';
-  showView('form');
-  document.getElementById('nav-new').classList.add('active');
-}
-
-function editProceso(id) {
-  const p = allProcesos.find(x => x.id === id);
-  if (!p) return;
-  editingId = id;
-  clearForm();
-  fillForm(p);
-  document.getElementById('form-title').textContent = 'Editar proceso';
-  const badge = document.getElementById('form-id-badge');
-  badge.textContent = id;
-  badge.style.display = '';
-  showView('form');
-}
-
-// ══════════════════════════════════════════════
-// FORM
-// ══════════════════════════════════════════════
+// ── FORM ──────────────────────────────────────
 function clearForm() {
-  const ids = ['f-nombre','f-fecha','f-actualizado','f-detalle-actualiz','f-faqs',
-    'f-faqs-necesarias','f-tipif','f-tipif-necesaria','f-oferta','f-mejora-oferta',
-    'f-avisos','f-info-incluida','f-mejora-nec','f-resumen-mejora','f-nuevo-contenido-id',
-    'f-feedback-servicio','f-validado-por','f-avatado','f-loc-ava','f-caso-ava',
-    'f-resumen-ava','f-feedback-ava','f-validado-ava'];
-  ids.forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  ['f-nombre','f-fecha','f-actualizado','f-detalle-actualiz','f-faqs','f-faqs-necesarias',
+   'f-tipif','f-tipif-necesaria','f-oferta','f-mejora-oferta','f-avisos','f-info-incluida',
+   'f-mejora-nec','f-resumen-mejora','f-nuevo-contenido-id','f-feedback-servicio','f-validado-por',
+   'f-avatado','f-loc-ava','f-caso-ava','f-resumen-ava','f-feedback-ava','f-validado-ava']
+  .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   document.getElementById('f-fecha').value = new Date().toISOString().split('T')[0];
-  // Ocultar todos los campos condicionales
   document.querySelectorAll('.cond-field').forEach(el => el.classList.remove('visible'));
 }
 
 function fillForm(p) {
-  const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
-  set('f-nombre',             p.nombre);
-  set('f-fecha',              p.fecha_revision);
-  set('f-actualizado',        p.actualizado);
-  set('f-detalle-actualiz',   p.detalle_actualizacion);
-  set('f-faqs',               p.tiene_faqs);
-  set('f-faqs-necesarias',    p.faqs_necesarias);
-  set('f-tipif',              p.tiene_tipificaciones);
-  set('f-tipif-necesaria',    p.tipif_necesaria);
-  set('f-oferta',             p.tiene_oferta);
-  set('f-mejora-oferta',      p.mejora_oferta);
-  set('f-avisos',             p.avisos_publicados);
-  set('f-info-incluida',      p.info_incluida);
-  set('f-mejora-nec',         p.mejora_necesaria);
-  set('f-resumen-mejora',     p.resumen_mejora);
-  set('f-nuevo-contenido-id', p.nuevo_contenido_id);
-  set('f-feedback-servicio',  p.feedback_servicio);
-  set('f-validado-por',       p.validado_por);
-  set('f-avatado',            p.avatado);
-  set('f-loc-ava',            p.localizacion_ava);
-  set('f-caso-ava',           p.caso_uso_ava);
-  set('f-resumen-ava',        p.resumen_caso_uso_ava);
-  set('f-feedback-ava',       p.feedback_ava);
-  set('f-validado-ava',       p.validado_ava);
+  const s = (id, v) => { const el = document.getElementById(id); if(el) el.value = v||''; };
+  s('f-nombre',p.nombre); s('f-fecha',p.fecha_revision); s('f-actualizado',p.actualizado);
+  s('f-detalle-actualiz',p.detalle_actualizacion); s('f-faqs',p.tiene_faqs);
+  s('f-faqs-necesarias',p.faqs_necesarias); s('f-tipif',p.tiene_tipificaciones);
+  s('f-tipif-necesaria',p.tipif_necesaria); s('f-oferta',p.tiene_oferta);
+  s('f-mejora-oferta',p.mejora_oferta); s('f-avisos',p.avisos_publicados);
+  s('f-info-incluida',p.info_incluida); s('f-mejora-nec',p.mejora_necesaria);
+  s('f-resumen-mejora',p.resumen_mejora); s('f-nuevo-contenido-id',p.nuevo_contenido_id);
+  s('f-feedback-servicio',p.feedback_servicio); s('f-validado-por',p.validado_por);
+  s('f-avatado',p.avatado); s('f-loc-ava',p.localizacion_ava);
+  s('f-caso-ava',p.caso_uso_ava); s('f-resumen-ava',p.resumen_caso_uso_ava);
+  s('f-feedback-ava',p.feedback_ava); s('f-validado-ava',p.validado_ava);
 
-  // Activar campos condicionales si tienen valor
-  if (p.actualizado === 'No') document.getElementById('cond-actualiz').classList.add('visible');
-  if (p.tiene_faqs === 'No') document.getElementById('cond-faqs').classList.add('visible');
-  if (p.tiene_tipificaciones === 'No') document.getElementById('cond-tipif').classList.add('visible');
-  if (p.tiene_oferta === 'Sí') document.getElementById('cond-oferta').classList.add('visible');
-  if (p.avisos_publicados === 'Sí') document.getElementById('cond-avisos').classList.add('visible');
-  if (p.mejora_necesaria === 'Sí') document.getElementById('cond-mejora').classList.add('visible');
-  if (p.caso_uso_ava === 'Sí') document.getElementById('cond-ava').classList.add('visible');
+  if(p.actualizado==='No')          document.getElementById('cond-actualiz').classList.add('visible');
+  if(p.tiene_faqs==='No')           document.getElementById('cond-faqs').classList.add('visible');
+  if(p.tiene_tipificaciones==='No') document.getElementById('cond-tipif').classList.add('visible');
+  if(p.tiene_oferta==='Sí')         document.getElementById('cond-oferta').classList.add('visible');
+  if(p.avisos_publicados==='Sí')    document.getElementById('cond-avisos').classList.add('visible');
+  if(p.mejora_necesaria==='Sí')     document.getElementById('cond-mejora').classList.add('visible');
+  if(p.caso_uso_ava==='Sí')         document.getElementById('cond-ava').classList.add('visible');
 }
 
-function toggleCond(selectId, triggerVal, condId) {
-  const val = document.getElementById(selectId).value;
-  const cond = document.getElementById(condId);
-  if (val === triggerVal) cond.classList.add('visible');
-  else cond.classList.remove('visible');
-}
+function toggleCond(sid, val, cid) { document.getElementById(cid).classList.toggle('visible', document.getElementById(sid).value === val); }
 
-// ══════════════════════════════════════════════
-// DELETE MODAL
-// ══════════════════════════════════════════════
-function askDelete(id, nombre) {
-  deleteId = id;
-  document.getElementById('modal-msg').textContent =
-    `¿Seguro que quieres eliminar "${nombre}"? Esta acción no se puede deshacer.`;
-  document.getElementById('modal-overlay').classList.add('show');
-}
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('show');
-  deleteId = null;
-}
+// ── MODAL ─────────────────────────────────────
+function askDelete(id, nombre) { deleteId = id; document.getElementById('modal-msg').textContent = `¿Seguro que quieres eliminar "${nombre}"? Esta acción no se puede deshacer.`; document.getElementById('modal-overlay').classList.add('show'); }
+function closeModal() { document.getElementById('modal-overlay').classList.remove('show'); deleteId = null; }
+document.getElementById('modal-overlay').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
 
-// ══════════════════════════════════════════════
-// EXPORT
-// ══════════════════════════════════════════════
+// ── EXPORT ────────────────────────────────────
 function exportCSV() {
-  if (!allProcesos.length) { toast('No hay datos para exportar', 'err'); return; }
-  const keys = Object.keys(allProcesos[0]);
-  const rows = [keys.join(';'), ...allProcesos.map(p => keys.map(k => '"' + (p[k]||'').toString().replace(/"/g,'""') + '"').join(';'))];
-  download('revisiones_' + today() + '.csv', rows.join('\n'), 'text/csv');
-  toast('✓ CSV exportado', 'ok');
+  if(!allProcesos.length){toast('No hay datos para exportar','err');return;}
+  const k=Object.keys(allProcesos[0]);
+  download('revisiones_'+today()+'.csv',[k.join(';'),...allProcesos.map(p=>k.map(c=>'"'+(p[c]||'').toString().replace(/"/g,'""')+'"').join(';'))].join('\n'),'text/csv');
+  toast('✓ CSV exportado','ok');
 }
-
 function exportJSON() {
-  if (!allProcesos.length) { toast('No hay datos para exportar', 'err'); return; }
-  download('revisiones_' + today() + '.json', JSON.stringify(allProcesos, null, 2), 'application/json');
-  toast('✓ JSON exportado', 'ok');
+  if(!allProcesos.length){toast('No hay datos para exportar','err');return;}
+  download('revisiones_'+today()+'.json',JSON.stringify(allProcesos,null,2),'application/json');
+  toast('✓ JSON exportado','ok');
 }
+function download(name,content,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();}
 
-function download(filename, content, type) {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([content], { type }));
-  a.download = filename;
-  a.click();
-}
-
-// ══════════════════════════════════════════════
-// UI HELPERS
-// ══════════════════════════════════════════════
-function showLoading(msg) {
-  document.getElementById('loading-msg').textContent = msg || 'Cargando…';
-  document.getElementById('loading').classList.remove('hidden');
-}
-function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
-
-let toastTimer;
-function toast(msg, type='ok') {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'show ' + type;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
-}
-
-function setSync(on) {
-  document.getElementById('sync-btn').classList.toggle('loading', on);
-}
-
-function pillYN(val, warn=false) {
-  if (!val) return '<span class="pill na">—</span>';
-  if (val === 'Sí') return warn
-    ? '<span class="pill warn">⚠ Sí</span>'
-    : '<span class="pill yes">✓ Sí</span>';
-  if (val === 'No') return '<span class="pill no">✗ No</span>';
-  return `<span class="pill na">${val}</span>`;
-}
-
-function esc(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function fmtDate(val) {
-  if (!val) return '—';
-  try {
-    const d = new Date(val);
-    return d.toLocaleDateString('es-ES', { day:'2-digit', month:'2-digit', year:'numeric' });
-  } catch { return val; }
-}
-
-function fmtDateTime(val) {
-  if (!val) return '—';
-  try {
-    const d = new Date(val);
-    return d.toLocaleDateString('es-ES', { day:'2-digit', month:'2-digit', year:'numeric' }) + ' '
-         + d.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' });
-  } catch { return val; }
-}
-
-function today() {
-  return new Date().toISOString().split('T')[0];
-}
-
-// Cerrar modal al clicar fuera
-document.getElementById('modal-overlay').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
+// ── UI HELPERS ────────────────────────────────
+function showLoading(msg){document.getElementById('loading-msg').textContent=msg||'Cargando…';document.getElementById('loading').classList.remove('hidden');}
+function hideLoading(){document.getElementById('loading').classList.add('hidden');}
+let _tt;
+function toast(msg,type='ok'){const el=document.getElementById('toast');el.textContent=msg;el.className='show '+type;clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),3000);}
+function setSync(on){document.getElementById('sync-btn').classList.toggle('loading',on);}
+function pillYN(v,warn=false){if(!v)return'<span class="pill na">—</span>';if(v==='Sí')return warn?'<span class="pill warn">⚠ Sí</span>':'<span class="pill yes">✓ Sí</span>';if(v==='No')return'<span class="pill no">✗ No</span>';return`<span class="pill na">${v}</span>`;}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtDate(v){if(!v)return'—';try{return new Date(v).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'});}catch{return v;}}
+function fmtDateTime(v){if(!v)return'—';try{const d=new Date(v);return d.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});}catch{return v;}}
+function today(){return new Date().toISOString().split('T')[0];}
 </script>
 </body>
 </html>
