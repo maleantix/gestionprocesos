@@ -843,10 +843,43 @@ function exportProcesoCSV() {
 }
 
 function exportUno(p) {
-  const keys = Object.keys(LABELS);
-  const header = keys.map(k => '"' + LABELS[k] + '"').join(';');
-  const row    = keys.map(k => '"' + (p[k] || '').toString().replace(/"/g, '""') + '"').join(';');
-  download('proceso_' + p.id + '_' + today() + '.csv', header + '\n' + row, 'text/csv');
+  const seccionHeader = (titulo) => `"${titulo}";""`;
+  const fila = (label, val) => `"${label}";"${(val||'').toString().replace(/"/g,'""')}"`;
+
+  const rows = [
+    `"Nombre del contenido";"${(p.nombre||'').replace(/"/g,'""')}"`,
+    `"ID";"${(p.id||'').replace(/"/g,'""')}"`,
+    `"Fecha revisión";"${fmtDate(p.fecha_revision)}"`,
+    `"";""`  ,
+    seccionHeader('── CONTENIDO ──'),
+    fila('¿Está actualizado? Sí/No', p.actualizado),
+    fila('Si no está actualizado, detalla nombres e IDs', p.detalle_actualizacion),
+    fila('¿Tiene preguntas frecuentes? Sí/No', p.tiene_faqs),
+    fila('Si No, ¿las ves necesarias? ¿Por qué?', p.faqs_necesarias),
+    fila('¿Tiene pestaña de Tipificaciones? Sí/No', p.tiene_tipificaciones),
+    fila('Si No, ¿la ves necesaria? ¿Por qué?', p.tipif_necesaria),
+    fila('¿Tiene relacionada una oferta comercial? Sí/No', p.tiene_oferta),
+    fila('Si Sí, ¿es necesario realizar alguna mejora?', p.mejora_oferta),
+    fila('¿Hay avisos publicados relacionados? Sí/No', p.avisos_publicados),
+    fila('Si Sí, ¿la información está incluida en el contenido?', p.info_incluida),
+    `"";""`  ,
+    seccionHeader('── PROPUESTA DE MEJORA ──'),
+    fila('¿Es necesario realizar una mejora del contenido? Sí/No', p.mejora_necesaria),
+    fila('Si Sí, resumen de en qué consiste la mejora', p.resumen_mejora),
+    fila('Si se ha creado nuevo contenido, nombre e ID', p.nuevo_contenido_id),
+    fila('En base al feedback de qué servicio/TL/agente', p.feedback_servicio),
+    fila('Con qué servicio/TL/agente se validó la propuesta', p.validado_por),
+    `"";""`  ,
+    seccionHeader('── AVA ──'),
+    fila('¿El contenido está completamente avatado? Sí/No', p.avatado),
+    fila('¿Cómo se localiza en AVA? Caso de uso / Enlaces a DO', p.localizacion_ava),
+    fila('¿Ves necesario realizar propuesta de caso de uso? Sí/No', p.caso_uso_ava),
+    fila('Si Sí, resumen de en qué consiste la mejora', p.resumen_caso_uso_ava),
+    fila('En base al feedback de qué servicio/TL/agente', p.feedback_ava),
+    fila('Con qué servicio/TL/agente se validó el caso de uso', p.validado_ava),
+  ];
+
+  download('proceso_' + p.id + '_' + today() + '.csv', rows.join('\n'), 'text/csv;charset=utf-8');
   toast('✓ CSV exportado: ' + p.id, 'ok');
 }
 
