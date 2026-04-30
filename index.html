@@ -156,6 +156,8 @@ td.date-cell { font-family: var(--mono); font-size: 11px; color: var(--gray-500)
 .btn-del:hover  { background: var(--red-block); color: white; }
 .btn-hist { background: var(--blue-light); color: var(--blue-block); }
 .btn-hist:hover { background: var(--blue-block); color: white; }
+.btn-exp  { background: #E8F5E9; color: #2E7D32; }
+.btn-exp:hover  { background: #2E7D32; color: white; }
 .empty-state { padding: 64px 24px; text-align: center; color: var(--gray-500); }
 .empty-state .big { font-size: 40px; margin-bottom: 12px; }
 .empty-state p { font-size: 14px; }
@@ -480,6 +482,7 @@ td.date-cell { font-family: var(--mono); font-size: 11px; color: var(--gray-500)
 
       <div class="form-actions">
         <button class="btn-cancel" onclick="showView('list')">Cancelar</button>
+        <button class="btn-export" id="btn-export-form" onclick="exportProcesoCSV()" style="padding:10px 16px;font-size:13px;display:none;">📄 Exportar CSV</button>
         <button class="btn-save" onclick="saveProceso()">💾 Guardar proceso</button>
       </div>
     </div>
@@ -707,6 +710,7 @@ function renderList(list) {
       <td class="actions-cell" onclick="event.stopPropagation()">
         <button class="btn-icon btn-edit" title="Editar"    onclick="editProceso('${p.id}')">✏️</button>
         <button class="btn-icon btn-hist" title="Historial" onclick="loadHistory('${p.id}','${esc(p.nombre)}')">🕐</button>
+        <button class="btn-icon btn-exp"  title="Exportar CSV" onclick="exportUnoPorId('${p.id}')">📄</button>
         <button class="btn-icon btn-del"  title="Eliminar"  onclick="askDelete('${p.id}','${esc(p.nombre)}')">🗑️</button>
       </td>
     </tr>`).join('');
@@ -756,10 +760,11 @@ function newProceso() {
   idEl.style.background = '';
   document.getElementById('form-title').textContent = 'Nuevo proceso';
   document.getElementById('form-id-badge').style.display = 'none';
+  document.getElementById('btn-export-form').style.display = 'none';
   showView('form');
   document.getElementById('nav-new').classList.add('active');
 }
-function editProceso(id) { const p = allProcesos.find(x => x.id === id); if (!p) return; editingId = id; clearForm(); fillForm(p); document.getElementById('form-title').textContent = 'Editar proceso'; const b = document.getElementById('form-id-badge'); b.textContent = id; b.style.display = ''; showView('form'); }
+function editProceso(id) { const p = allProcesos.find(x => x.id === id); if (!p) return; editingId = id; clearForm(); fillForm(p); document.getElementById('form-title').textContent = 'Editar proceso'; const b = document.getElementById('form-id-badge'); b.textContent = id; b.style.display = ''; document.getElementById('btn-export-form').style.display = ''; showView('form'); }
 
 // ── FORM ──────────────────────────────────────
 function clearForm() {
@@ -807,11 +812,50 @@ function closeModal() { document.getElementById('modal-overlay').classList.remov
 document.getElementById('modal-overlay').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
 
 // ── EXPORT ────────────────────────────────────
+const LABELS = {
+  id:'ID', nombre:'Nombre del contenido', fecha_revision:'Fecha revisión',
+  actualizado:'¿Está actualizado?', detalle_actualizacion:'Detalle actualización',
+  tiene_faqs:'¿Tiene FAQs?', faqs_necesarias:'FAQs necesarias',
+  tiene_tipificaciones:'¿Tiene Tipificaciones?', tipif_necesaria:'Tipificación necesaria',
+  tiene_oferta:'¿Tiene oferta comercial?', mejora_oferta:'Mejora oferta',
+  avisos_publicados:'¿Avisos publicados?', info_incluida:'Info incluida en contenido',
+  mejora_necesaria:'¿Mejora necesaria?', resumen_mejora:'Resumen mejora',
+  nuevo_contenido_id:'Nuevo contenido ID', feedback_servicio:'Feedback servicio/TL/agente',
+  validado_por:'Validado con', avatado:'¿Avatado?', localizacion_ava:'Localización AVA',
+  caso_uso_ava:'¿Caso uso AVA?', resumen_caso_uso_ava:'Resumen caso uso AVA',
+  feedback_ava:'Feedback AVA', validado_ava:'Validado caso uso AVA'
+};
+
+function exportUnoPorId(id) {
+  const p = allProcesos.find(x => x.id === id);
+  if (!p) { toast('Proceso no encontrado', 'err'); return; }
+  exportUno(p);
+}
+
+function exportProcesoCSV() {
+  // exporta el proceso que está abierto en el formulario en este momento
+  const id = document.getElementById('f-id').value.trim();
+  if (!id) { toast('Guarda el proceso primero', 'err'); return; }
+  const p = allProcesos.find(x => x.id === id);
+  if (!p) { toast('Sincroniza primero para exportar', 'err'); return; }
+  exportUno(p);
+}
+
+function exportUno(p) {
+  const keys = Object.keys(LABELS);
+  const header = keys.map(k => '"' + LABELS[k] + '"').join(';');
+  const row    = keys.map(k => '"' + (p[k] || '').toString().replace(/"/g, '""') + '"').join(';');
+  download('proceso_' + p.id + '_' + today() + '.csv', header + '\n' + row, 'text/csv');
+  toast('✓ CSV exportado: ' + p.id, 'ok');
+}
+
 function exportCSV() {
   if(!allProcesos.length){toast('No hay datos para exportar','err');return;}
-  const k=Object.keys(allProcesos[0]);
-  download('revisiones_'+today()+'.csv',[k.join(';'),...allProcesos.map(p=>k.map(c=>'"'+(p[c]||'').toString().replace(/"/g,'""')+'"').join(';'))].join('\n'),'text/csv');
-  toast('✓ CSV exportado','ok');
+  const keys = Object.keys(LABELS);
+  const header = keys.map(k => '"' + LABELS[k] + '"').join(';');
+  const rows = allProcesos.map(p => keys.map(k => '"'+(p[k]||'').toString().replace(/"/g,'""')+'"').join(';'));
+  download('revisiones_'+today()+'.csv', [header, ...rows].join('\n'), 'text/csv');
+  toast('✓ CSV exportado', 'ok');
 }
 function exportJSON() {
   if(!allProcesos.length){toast('No hay datos para exportar','err');return;}
