@@ -879,7 +879,8 @@ function exportUno(p) {
     fila('Con qué servicio/TL/agente se validó el caso de uso', p.validado_ava),
   ];
 
-  download('proceso_' + p.id + '_' + today() + '.csv', rows.join('\n'), 'text/csv;charset=utf-8');
+  const BOM = '\uFEFF'; // BOM para que Excel reconozca UTF-8 con tildes
+  download('proceso_' + p.id + '_' + today() + '.csv', BOM + rows.join('\n'), 'text/csv;charset=utf-8');
   toast('✓ CSV exportado: ' + p.id, 'ok');
 }
 
@@ -888,7 +889,8 @@ function exportCSV() {
   const keys = Object.keys(LABELS);
   const header = keys.map(k => '"' + LABELS[k] + '"').join(';');
   const rows = allProcesos.map(p => keys.map(k => '"'+(p[k]||'').toString().replace(/"/g,'""')+'"').join(';'));
-  download('revisiones_'+today()+'.csv', [header, ...rows].join('\n'), 'text/csv');
+  const BOM = '\uFEFF';
+  download('revisiones_'+today()+'.csv', BOM + [header, ...rows].join('\n'), 'text/csv;charset=utf-8');
   toast('✓ CSV exportado', 'ok');
 }
 function exportJSON() {
